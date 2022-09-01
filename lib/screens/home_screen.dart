@@ -64,13 +64,6 @@ class drawerMenu extends StatelessWidget {
               context.read<SupermarketBloc>().add(ViewAllSupermarket());
             },
           ),
-          ListTile(
-            title: const Text('Master Lokasi'),
-            onTap: () {
-              // Update the state of the app.
-              // ...
-            },
-          ),
           const Divider(height: 3, color: Colors.black),
           ListTile(
             title: const Text('Setting'),

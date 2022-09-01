@@ -16,3 +16,30 @@ class AddNewSuperMarket extends SupermarketEvent {
     required this.nameSupermarket,
   });
 }
+
+class DeleteSuperMarket extends SupermarketEvent {
+  int? idSupermarket;
+
+  DeleteSuperMarket({
+    required this.idSupermarket,
+  });
+}
+
+// lokasi
+class AddLocationSupermarket extends SupermarketEvent {
+  int idSupermarket;
+  String locationName;
+
+  AddLocationSupermarket({
+    required this.idSupermarket,
+    required this.locationName,
+  });
+}
+
+class ViewLocationById extends SupermarketEvent {
+  int idSupermarket;
+
+  ViewLocationById({
+    required this.idSupermarket,
+  });
+}

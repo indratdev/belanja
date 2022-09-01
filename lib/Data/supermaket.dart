@@ -1,7 +1,3 @@
-import 'package:belanja/Data/Errors.dart';
-import 'package:belanja/models/supermarket_model.dart';
-import 'package:flutter/material.dart';
-
 import '../databases/sqldatabase.dart';
 
 class Supermarket {
@@ -18,47 +14,50 @@ class Supermarket {
     return (trimAndUppercaseText(name).isEmpty) ? true : false;
   }
 
-  addNewSupermarket(String value) {
-    String name = trimAndUppercaseText(value);
-    var checkData = isNullNameSupermartket(name);
-    try {
-      if (!checkData) {
-        checkIsExistSupermarketName(name);
-      } else {
-        print("data ksoong");
-      }
-    } catch (e) {
-      print("data salah :$e");
-    }
-  }
+  // addNewSupermarket(String value) {
+  //   String name = trimAndUppercaseText(value);
+  //   // var checkData = isNullNameSupermartket(name);
+  //   // try {
+  //   //   if (!checkData) {
+  //   // checkIsExistSupermarketName(name);
+  //   //   } else {
+  //   //     print("data ksoong");
+  //   //   }
+  //   // } catch (e) {
+  //   //   print("data salah :$e");
+  //   // }
+  // }
 
-  checkIsExistSupermarketName(String value) async {
+  Future<bool> checkIsExistSupermarketName(String value) async {
+    value = trimAndUppercaseText(value);
     var isExist = await sqldatabase.isExistSupermarket(value);
-    // try {
-    if (isExist == 1) {
-      throw Exception('Data sudah ada');
-      // Errors(messageError: "Data sudah ada");
-    } else {
-      insertNewSupermarket(value);
-    }
-    // } catch (err) {
-    //   print("ini jalan : $err");
-
-    //   rethrow;
-    // }
-
-    // if (isExist == 0) {
-    //   insertNewSupermarket(value);
-    // } else if (isExist == 1) {
-    //   print("sudah ada");
-    //   throw Exception('Nama Supermarket Sudah ada!');
-    //   // emit(
-    //   //     FailureAddNewSupermarket(messageError: 'Data Supermarket Sudah Ada'));
-
-    // }
+    return (isExist == 1) ? true : false;
   }
 
   Future<int> insertNewSupermarket(String value) async {
+    value = trimAndUppercaseText(value);
     return await sqldatabase.insertNote(value);
+  }
+
+  Future<int> deleteSupermarketByID(int id) async {
+    return await sqldatabase.deleteDataSupermarketByID(id);
+  }
+
+  // location
+  // check apakah sudah ada nama yg sama
+  Future<bool> checkIsExistLocation(
+      int idSupermarket, String locationName) async {
+    locationName = trimAndUppercaseText(locationName);
+    var isExist =
+        await sqldatabase.isExistLocation(idSupermarket, locationName);
+    return (isExist == 1) ? true : false;
+  }
+
+  // insert lokasi
+  Future<int> insertLocationSupermarket(
+      int idSupermarket, String locationName) async {
+    locationName = trimAndUppercaseText(locationName);
+
+    return await sqldatabase.insertLocation(idSupermarket, locationName);
   }
 }

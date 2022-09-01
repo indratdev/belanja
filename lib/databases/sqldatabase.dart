@@ -144,7 +144,7 @@ class SqlDatabase {
     final db = await instance.database;
     var result = [];
     if (db != null) {
-      result = await db.rawQuery('''select name from $tableSupermarket ''');
+      result = await db.rawQuery('''select id, name from $tableSupermarket ''');
     } else {
       throw Exception('Error on DB');
     }
@@ -238,4 +238,74 @@ class SqlDatabase {
   //   }
   // }
 
+  Future<int> deleteDataSupermarketByID(int value) async {
+    final db = await instance.database;
+    var result;
+    if (db != null) {
+      List<Map> maps = await db
+          .rawQuery(''' delete  from $tableSupermarket where id = '$value';  
+              delete from $tableLocation where id_supermarket = '$value'
+          ''');
+
+      print(maps);
+      if (maps.length > 0) {
+        result = 1;
+      } else {
+        result = 0;
+      }
+    }
+    return result;
+  }
+
+  Future<int> isExistLocation(int idSupermarket, String locationName) async {
+    final db = await instance.database;
+    var result;
+    if (db != null) {
+      List<Map> maps = await db.rawQuery(
+          ''' select * from $tableLocation where id_supermarket = $idSupermarket and locationName = '$locationName';  ''');
+
+      print(maps);
+      if (maps.length > 0) {
+        result = 1;
+      } else {
+        result = 0;
+      }
+    }
+    return result;
+  }
+
+  // insert location -----------------------------------------------------------------
+  Future<int> insertLocation(int idSupermarket, String locationName) async {
+    final db = await instance.database;
+    int result = 0;
+    if (db != null) {
+      result = await db.rawInsert('''
+      INSERT INTO $tableLocation (id_supermarket, locationName)
+      VALUES
+      (
+        $idSupermarket,
+        '$locationName'
+        );
+      ''');
+    }
+    return result;
+  }
+
+  Future<List<SupermarketLocationModel>> readLocationByIDSuper(
+      int idSupermarket) async {
+    final db = await instance.database;
+    var result = [];
+    if (db != null) {
+      result = await db.rawQuery(
+          '''select id_supermarket, locationName from $tableLocation where id_supermarket = $idSupermarket ;   ''');
+
+      print("result 2 : $result");
+    } else {
+      throw Exception('Error on DB');
+    }
+
+    return result.map((e) => SupermarketLocationModel.fromJson(e)).toList();
+  }
+
+  // end location ---------------------------------------------------------------------
 }

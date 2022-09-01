@@ -21,7 +21,6 @@ class MasterSupermarketScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            // Navigator.pushNamed(context, '/mastersupermarketOper');
             showDialog(
                 context: context,
                 builder: (context) {
@@ -61,8 +60,30 @@ class MasterSupermarketScreen extends StatelessWidget {
           child: Icon(Icons.add)),
       body: BlocConsumer<SupermarketBloc, SupermarketState>(
         listener: (context, state) {
+          if (state is SuccessAddNewSupermarket) {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Center(
+                      child: Icon(Icons.abc),
+                    ),
+                    content: Text("Data Berhasil Disimpan"),
+                    actions: <Widget>[
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          context
+                              .read<SupermarketBloc>()
+                              .add(ViewAllSupermarket());
+                        },
+                        child: const Text("OK"),
+                      ),
+                    ],
+                  );
+                });
+          }
           if (state is FailureAddNewSupermarket) {
-            print("===== jalan");
             showDialog(
                 context: context,
                 builder: (context) {
@@ -75,9 +96,9 @@ class MasterSupermarketScreen extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
-                          // context
-                          //     .read<SupermarketBloc>()
-                          //     .add(ViewAllSupermarket());
+                          context
+                              .read<SupermarketBloc>()
+                              .add(ViewAllSupermarket());
                         },
                         child: const Text("OK"),
                       ),
@@ -98,10 +119,20 @@ class MasterSupermarketScreen extends StatelessWidget {
                 child: ListView.builder(
                   itemCount: result.length,
                   itemBuilder: (context, index) {
-                    return Container(
-                      color: (index % 2 == 0) ? Colors.amber : Colors.blue,
-                      child: ListTile(
-                        title: Text(result[index].name),
+                    return InkWell(
+                      onTap: () {
+                        print("object ${result[index].id}");
+                        Navigator.pushNamed(context, '/masterlocation',
+                            arguments: result[index]);
+                        context.read<SupermarketBloc>()
+                          ..add(ViewLocationById(
+                              idSupermarket: result[index].id ?? 0));
+                      },
+                      child: Container(
+                        color: (index % 2 == 0) ? Colors.amber : Colors.blue,
+                        child: ListTile(
+                          title: Text(result[index].name),
+                        ),
                       ),
                     );
                   },

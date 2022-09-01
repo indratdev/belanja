@@ -1,3 +1,4 @@
+import 'package:belanja/Data/Errors.dart';
 import 'package:belanja/Data/supermaket.dart';
 import 'package:belanja/databases/sqldatabase.dart';
 import 'package:belanja/models/supermarket_model.dart';
@@ -15,22 +16,33 @@ class SupermarketBloc extends Bloc<SupermarketEvent, SupermarketState> {
     on<AddNewSuperMarket>((event, emit) async {
       try {
         emit(LoadingAddNewSupermarket());
-        // check string kosong
-        var result = supermarket.addNewSupermarket(event.nameSupermarket);
-        emit(SuccessAddNewSupermarket(result: result));
-        // result
-        print("result : $result.toString()");
-        // } on Error catch (e) {
-        //   print("aaaa : $e");
-      } on Exception catch (e) {
-        // print("Exception : $e");
-        print("----- ini jalan");
-        // emit(FailureAddNewSupermarket(messageError: e.toString()));
-      } catch (e) {
-        // throw e;
-        print("dari catch e : $e");
-        // emit(FailureAddNewSupermarket(
-        //     messageError: 'Data Supermarket Sudah Ada'));
+
+        var cleanValue =
+            supermarket.trimAndUppercaseText(event.nameSupermarket);
+
+        if (cleanValue.isEmpty) {
+          throw DataInputNullException();
+        }
+
+        // cek apakah sudah ada di database
+        bool status = await supermarket.checkIsExistSupermarketName(cleanValue);
+
+        var finalStatus;
+
+        if (status) {
+          throw UnExistSupermarketException();
+        } else {
+          finalStatus = await supermarket.insertNewSupermarket(cleanValue);
+        }
+
+        emit(SuccessAddNewSupermarket(result: finalStatus));
+      } on UnExistSupermarketException catch (e) {
+        emit(FailureAddNewSupermarket(messageError: e.toString()));
+      } on DataInputNullException catch (e) {
+        emit(FailureAddNewSupermarket(messageError: e.toString()));
+      } catch (err) {
+        print("Error Add new: $err");
+        emit(FailureAddNewSupermarket(messageError: err.toString()));
       }
     });
 
@@ -51,6 +63,66 @@ class SupermarketBloc extends Bloc<SupermarketEvent, SupermarketState> {
       //   emit(FailureViewSupermarket(messageError: "Error : Menampilkan Data"));
 
       // }
+    });
+
+    on<DeleteSuperMarket>((event, emit) async {
+      try {
+        emit(LoadingDeleteSupermarket());
+        var result =
+            await supermarket.deleteSupermarketByID(event.idSupermarket!);
+        emit(SuccessDeleteSupermarket(result: result));
+      } catch (e) {
+        print("Error delete: $e");
+        emit(FailureDeleteSupermarket(messageError: e.toString()));
+      }
+    });
+
+    on<AddLocationSupermarket>((event, emit) async {
+      var locationName = "";
+      try {
+        emit(LoadingLocationSupermarket());
+        var cleanValue = supermarket.trimAndUppercaseText(event.locationName);
+
+        if (cleanValue.isEmpty) {
+          throw DataInputNullException();
+        }
+
+        // cek apakah sudah ada di database
+        bool status = await supermarket.checkIsExistLocation(
+            event.idSupermarket, cleanValue);
+
+        var finalStatus;
+
+        if (status) {
+          throw UnExistLocationSupermarketException();
+        } else {
+          finalStatus = await supermarket.insertLocationSupermarket(
+              event.idSupermarket, cleanValue);
+        }
+        emit(SuccessAddLocationSupermarket(result: finalStatus));
+      } on UnExistLocationSupermarketException catch (e) {
+        emit(FailureLocationSupermarket(messageError: e.toString()));
+      } on DataInputNullException catch (e) {
+        emit(FailureLocationSupermarket(messageError: e.toString()));
+      } catch (e) {
+        print("error : $e");
+        emit(FailureLocationSupermarket(messageError: e.toString()));
+      }
+    });
+
+    on<ViewLocationById>((event, emit) async {
+      try {
+        emit(LoadingViewLocationById());
+        print("event.idsupermarket : ${event.idSupermarket}");
+        var result =
+            await sqldatabase.readLocationByIDSuper(event.idSupermarket);
+        print("result : $result");
+
+        emit(SuccessViewLocationById(result: result));
+      } catch (e) {
+        print("error e: $e");
+        emit(FailureViewLocationById(messageError: e.toString()));
+      }
     });
   }
 }

@@ -7,6 +7,17 @@ abstract class SupermarketState extends Equatable {
   List<Object> get props => [];
 }
 
+abstract class FailureSupermarket extends SupermarketState {
+  String messageError;
+
+  FailureSupermarket({
+    required this.messageError,
+  });
+
+  @override
+  List<Object> get props => [messageError];
+}
+
 class SupermarketInitial extends SupermarketState {}
 
 // add new supermarket
@@ -62,3 +73,55 @@ class SuccessViewSupermarket extends SupermarketState {
 }
 
 // !!! end view supermarket
+
+class LoadingDeleteSupermarket extends SupermarketState {}
+
+class FailureDeleteSupermarket extends FailureViewSupermarket {
+  FailureDeleteSupermarket({required super.messageError});
+}
+
+class SuccessDeleteSupermarket extends SupermarketState {
+  int result;
+
+  SuccessDeleteSupermarket({
+    required this.result,
+  });
+
+  @override
+  List<Object> get props => [result];
+}
+
+// location
+class LoadingLocationSupermarket extends SupermarketState {}
+
+class FailureLocationSupermarket extends FailureSupermarket {
+  FailureLocationSupermarket({required super.messageError});
+}
+
+class SuccessAddLocationSupermarket extends SupermarketState {
+  int result;
+
+  SuccessAddLocationSupermarket({
+    required this.result,
+  });
+
+  @override
+  List<Object> get props => [result];
+}
+
+class LoadingViewLocationById extends SupermarketState {}
+
+class FailureViewLocationById extends FailureSupermarket {
+  FailureViewLocationById({required super.messageError});
+}
+
+class SuccessViewLocationById extends SupermarketState {
+  List<SupermarketLocationModel> result;
+
+  SuccessViewLocationById({
+    required this.result,
+  });
+
+  @override
+  List<Object> get props => [result];
+}
