@@ -2,6 +2,8 @@ import 'package:belanja/models/supermarket_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+import '../models/supermarketlocation_model.dart';
+
 class SqlDatabase {
   static final SqlDatabase instance = SqlDatabase._init();
   static Database? _database;
@@ -56,7 +58,7 @@ class SqlDatabase {
     await db.execute('''
     CREATE TABLE $tableLocation    (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      id_supermarket INTEGER,
+      idSupermarket INTEGER,
       locationName TEXT NULL
       )
       ''');
@@ -137,6 +139,7 @@ class SqlDatabase {
         result = 0;
       }
     }
+
     return result;
   }
 
@@ -145,10 +148,12 @@ class SqlDatabase {
     var result = [];
     if (db != null) {
       result = await db.rawQuery('''select id, name from $tableSupermarket ''');
+      print("result hasil : $result");
     } else {
       throw Exception('Error on DB');
     }
-
+    // var hasil = result.map((e) => SupermarketModel.fromJson(e)).toList();
+    // print("hasil : $hasil");
     return result.map((e) => SupermarketModel.fromJson(e)).toList();
   }
 
@@ -244,7 +249,10 @@ class SqlDatabase {
     if (db != null) {
       List<Map> maps = await db
           .rawQuery(''' delete  from $tableSupermarket where id = '$value';  
-              delete from $tableLocation where id_supermarket = '$value'
+              
+          ''');
+      List<Map> maps2 = await db.rawQuery('''   
+              delete from $tableLocation where idSupermarket = '$value'
           ''');
 
       print(maps);
@@ -262,7 +270,7 @@ class SqlDatabase {
     var result;
     if (db != null) {
       List<Map> maps = await db.rawQuery(
-          ''' select * from $tableLocation where id_supermarket = $idSupermarket and locationName = '$locationName';  ''');
+          ''' select * from $tableLocation where idSupermarket = $idSupermarket and locationName = '$locationName';  ''');
 
       print(maps);
       if (maps.length > 0) {
@@ -280,7 +288,7 @@ class SqlDatabase {
     int result = 0;
     if (db != null) {
       result = await db.rawInsert('''
-      INSERT INTO $tableLocation (id_supermarket, locationName)
+      INSERT INTO $tableLocation (idSupermarket, locationName)
       VALUES
       (
         $idSupermarket,
@@ -291,21 +299,65 @@ class SqlDatabase {
     return result;
   }
 
-  Future<List<SupermarketLocationModel>> readLocationByIDSuper(
-      int idSupermarket) async {
+  // Future<List<SupermarketLocationModel>> readLocationByIDSuper(
+  //     int idSupermarket) async {
+  //   final db = await instance.database;
+  //   List<SupermarketLocationModel> finalResult = [];
+  //   List<Map<String, dynamic>> result = [];
+  //   if (db != null) {
+  //     result = await db.rawQuery(
+  //         '''select id, idSupermarket, locationName from $tableLocation where idSupermarket = $idSupermarket ;   ''');
+
+  //     print("result 2 : $result");
+  //     finalResult =
+  //         result.map((e) => SupermarketLocationModel.fromJson(e)).toList();
+  //   } else {
+  //     throw Exception('Error on DB');
+  //   }
+
+  //   // return result.map((e) => SupermarketLocationModel.fromJson(e)).toList();
+  //   return finalResult;
+  // }
+
+  // Future<List<SupermarketLocationModel>>
+  readLocationByIDSuper(int idSupermarket) async {
     final db = await instance.database;
     var result = [];
     if (db != null) {
       result = await db.rawQuery(
-          '''select id_supermarket, locationName from $tableLocation where id_supermarket = $idSupermarket ;   ''');
-
-      print("result 2 : $result");
+          '''select id, idSupermarket, locationName from $tableLocation where idSupermarket = $idSupermarket ; ''');
+      print("result # $result");
     } else {
       throw Exception('Error on DB');
     }
 
-    return result.map((e) => SupermarketLocationModel.fromJson(e)).toList();
+    // var hasil =
+    //     result.map((e) => SupermarketLocationModel.fromJson(e)).toList();
+    // print("hasil : $hasil");
+
+    return (result.isNotEmpty)
+        ? result.map((e) => SupermarketLocationModel.fromJson(e)).toList()
+        : [];
   }
 
   // end location ---------------------------------------------------------------------
+
+  // delete location by id
+  Future<int> deleteLocationByID(int value) async {
+    final db = await instance.database;
+    var result;
+    if (db != null) {
+      List<Map> maps = await db
+          .rawQuery(''' delete  from $tableLocation where id = '$value';  
+              
+          ''');
+
+      if (maps.length > 0) {
+        result = 1;
+      } else {
+        result = 0;
+      }
+    }
+    return result;
+  }
 }

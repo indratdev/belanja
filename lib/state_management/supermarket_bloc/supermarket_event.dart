@@ -43,3 +43,19 @@ class ViewLocationById extends SupermarketEvent {
     required this.idSupermarket,
   });
 }
+
+class ViewAllLocationById extends SupermarketEvent {
+  int idSupermarket;
+
+  ViewAllLocationById({
+    required this.idSupermarket,
+  });
+}
+
+class DeleteLocationById extends SupermarketEvent {
+  int idLocation;
+
+  DeleteLocationById({
+    required this.idLocation,
+  });
+}

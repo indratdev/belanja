@@ -5,6 +5,8 @@ import 'package:belanja/models/supermarket_model.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../models/supermarketlocation_model.dart';
+
 part 'supermarket_event.dart';
 part 'supermarket_state.dart';
 
@@ -50,7 +52,7 @@ class SupermarketBloc extends Bloc<SupermarketEvent, SupermarketState> {
       try {
         emit(LoadingViewSupermarket());
         var result = await sqldatabase.readAllSupermarket();
-        // print("rsu : $result");
+        print("rsu : $result");
         emit(SuccessViewSupermarket(result: result));
         // } on FormatException {
         //   print("object");
@@ -113,15 +115,26 @@ class SupermarketBloc extends Bloc<SupermarketEvent, SupermarketState> {
     on<ViewLocationById>((event, emit) async {
       try {
         emit(LoadingViewLocationById());
-        print("event.idsupermarket : ${event.idSupermarket}");
+        // print("event.idsupermarket : ${event.idSupermarket}");
         var result =
             await sqldatabase.readLocationByIDSuper(event.idSupermarket);
-        print("result : $result");
 
         emit(SuccessViewLocationById(result: result));
       } catch (e) {
         print("error e: $e");
         emit(FailureViewLocationById(messageError: e.toString()));
+      }
+    });
+
+    // delete location by id
+    on<DeleteLocationById>((event, emit) async {
+      try {
+        emit(LoadingDeleteLocationByIdState());
+        var result = await sqldatabase.deleteLocationByID(event.idLocation);
+        emit(SuccessDeleteLocationById(result: result));
+      } catch (e) {
+        print(e.toString());
+        emit(FailureDeleteLocationById(messageError: ("Gagal Hapus Lokasi")));
       }
     });
   }

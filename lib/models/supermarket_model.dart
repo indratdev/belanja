@@ -18,19 +18,19 @@ class SupermarketModel {
   Map<String, dynamic> toJson() => _$SupermarketModelToJson(this);
 }
 
-@JsonSerializable()
-class SupermarketLocationModel {
-  int? id;
-  int idSupermarket;
-  String locationName;
+// @JsonSerializable()
+// class SupermarketLocationModel {
+//   int? id;
+//   int idSupermarket;
+//   String locationName;
 
-  SupermarketLocationModel({
-    required this.idSupermarket,
-    required this.locationName,
-  });
+//   SupermarketLocationModel({
+//     required this.idSupermarket,
+//     required this.locationName,
+//   });
 
-  factory SupermarketLocationModel.fromJson(Map<String, dynamic> json) =>
-      _$SupermarketLocationModelFromJson(json);
+//   factory SupermarketLocationModel.fromJson(Map<String, dynamic> json) =>
+//       _$SupermarketLocationModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$SupermarketLocationModelToJson(this);
-}
+//   Map<String, dynamic> toJson() => _$SupermarketLocationModelToJson(this);
+// }

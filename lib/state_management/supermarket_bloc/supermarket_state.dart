@@ -125,3 +125,39 @@ class SuccessViewLocationById extends SupermarketState {
   @override
   List<Object> get props => [result];
 }
+
+class LoadingViewAllLocationById extends SupermarketState {}
+
+class FailureViewAllLocationById extends FailureSupermarket {
+  FailureViewAllLocationById({required super.messageError});
+}
+
+class SuccessViewAllLocationById extends SupermarketState {
+  List<SupermarketLocationModel> result;
+
+  SuccessViewAllLocationById({
+    required this.result,
+  });
+
+  @override
+  List<Object> get props => [result];
+}
+
+// delete location by id
+
+class LoadingDeleteLocationByIdState extends SupermarketState {}
+
+class FailureDeleteLocationById extends FailureSupermarket {
+  FailureDeleteLocationById({required super.messageError});
+}
+
+class SuccessDeleteLocationById extends SupermarketState {
+  int result;
+
+  SuccessDeleteLocationById({
+    required this.result,
+  });
+
+  @override
+  List<Object> get props => [result];
+}
