@@ -1,3 +1,4 @@
+import 'package:belanja/screens/transaction/transaction_screen.dart';
 import 'package:belanja/state_management/supermarket_bloc/supermarket_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,15 +42,16 @@ class drawerMenu extends StatelessWidget {
           ListTile(
             title: const Text('Transaksi'),
             onTap: () {
-              // Update the state of the app.
-              // ...
+              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => TransactionScreen(),
+              ));
             },
           ),
           ListTile(
             title: const Text('Komparasi'),
             onTap: () {
-              // Update the state of the app.
-              // ...
+              //
             },
           ),
           const Divider(height: 3, color: Colors.black),

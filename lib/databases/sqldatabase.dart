@@ -319,8 +319,8 @@ class SqlDatabase {
   //   return finalResult;
   // }
 
-  // Future<List<SupermarketLocationModel>>
-  readLocationByIDSuper(int idSupermarket) async {
+  Future<List<SupermarketLocationModel>> readLocationByIDSuper(
+      int idSupermarket) async {
     final db = await instance.database;
     var result = [];
     if (db != null) {
@@ -358,6 +358,32 @@ class SqlDatabase {
         result = 0;
       }
     }
+    return result;
+  }
+
+  // transaction
+  // initial value
+  Future<Map<String, dynamic>> InitialSupermarket() async {
+    Map<String, dynamic> result = {};
+
+    List<String> superr = [];
+    List<String> location = [];
+
+    // supermarket
+    var data = await readAllSupermarket();
+    for (var element in data) {
+      superr.add(element.name);
+    }
+
+    // location
+    var dumpLocation = await readLocationByIDSuper(data.first.id!);
+    for (var element in dumpLocation) {
+      location.add(element.locationName);
+    }
+
+    result["supermarket"] = superr;
+    result["location"] = location;
+
     return result;
   }
 }

@@ -71,6 +71,7 @@ class MasterLocationScreen extends StatelessWidget {
                                     locationName: locationController.text));
 
                             Navigator.pop(context);
+                            locationController.text = "";
                           },
                           child: const Text("Proses"),
                         )
