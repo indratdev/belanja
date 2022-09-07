@@ -1,3 +1,5 @@
+import 'package:belanja/databases/sqldatabase.dart';
+import 'package:belanja/state_management/supermarket_bloc/supermarket_bloc.dart';
 import 'package:belanja/state_management/transaction_bloc/transaction_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,16 +8,20 @@ class OperationTransactionScreen extends StatelessWidget {
   OperationTransactionScreen({Key? key}) : super(key: key);
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final SqlDatabase sqldatabase = SqlDatabase.instance;
 
   @override
   Widget build(BuildContext context) {
-    // String? selectedDropdownSuper = "Pilih Supermarket";
+    String? selectedDropdownSuper = "";
     List<String> listSuper = [];
     List<String> listLocation = [];
 
+    TextEditingController itemNameController = TextEditingController();
+    TextEditingController amountController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Transaksi"),
+        title: const Text("Input Transaksi"),
       ),
       body: BlocConsumer<TransactionBloc, TransactionState>(
         listener: (context, state) {
@@ -25,6 +31,7 @@ class OperationTransactionScreen extends StatelessWidget {
           if (state is SuccessInitialTransaction) {
             listSuper = state.result["supermarket"];
             listLocation = state.result["location"];
+            selectedDropdownSuper = state.result["selectedSupermarket"];
 
             return Form(
               key: _formKey,
@@ -32,7 +39,9 @@ class OperationTransactionScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   DropdownButton(
-                    value: listSuper.first,
+                    value: (selectedDropdownSuper == "")
+                        ? selectedDropdownSuper
+                        : listSuper.first,
                     items:
                         listSuper.map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
@@ -41,10 +50,10 @@ class OperationTransactionScreen extends StatelessWidget {
                       );
                     }).toList(),
                     onChanged: (String? value) {
-                      // This is called when the user selects an item.
-                      // setState(() {
-                      //   dropdownValue = value!;
-                      // });
+                      selectedDropdownSuper = value;
+                      sqldatabase.readSupermarketByName(value!);
+                      context.read<TransactionBloc>().add(
+                          ChangeSupernLocationEvent(supermarketName: value));
                       print(value);
                     },
                   ),
@@ -60,9 +69,6 @@ class OperationTransactionScreen extends StatelessWidget {
                     }).toList(),
                     onChanged: (String? value) {
                       // This is called when the user selects an item.
-                      // setState(() {
-                      //   dropdownValue = value!;
-                      // });
                     },
                   ),
                   const SizedBox(height: 30),
@@ -71,7 +77,7 @@ class OperationTransactionScreen extends StatelessWidget {
                     decoration: const InputDecoration(
                       // icon: Icon(Icons.person),
                       hintText: 'Nama, Merk, Berat',
-                      labelText: 'Nama Barang *',
+                      labelText: 'Nama Barang, Merk, Berat *',
                     ),
                     onSaved: (String? value) {
                       print("onsaved : $value");
@@ -111,7 +117,7 @@ class OperationTransactionScreen extends StatelessWidget {
                           print("OKKKK");
                         }
                       },
-                      child: Text("Simpan")),
+                      child: const Text("Simpan")),
                 ],
               ),
             );

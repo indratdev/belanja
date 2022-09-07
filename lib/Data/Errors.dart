@@ -21,3 +21,8 @@ class UnExistLocationSupermarketException implements Exception {
   @override
   String toString() => 'Lokasi Supermarket Sudah Ada';
 }
+
+class OperationSQLException implements Exception {
+  @override
+  String toString() => 'SQL Error !';
+}

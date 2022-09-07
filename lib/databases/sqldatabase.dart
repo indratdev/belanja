@@ -1,3 +1,4 @@
+import 'package:belanja/Data/Errors.dart';
 import 'package:belanja/models/supermarket_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -41,6 +42,7 @@ class SqlDatabase {
     CREATE TABLE $tableTransaction    (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       idSupermarket INTEGER,
+      idLocation INTEGER,
       transactionDate TEXT NULL,
       itemName TEXT NULL,
       description TEXT NULL,
@@ -155,6 +157,19 @@ class SqlDatabase {
     // var hasil = result.map((e) => SupermarketModel.fromJson(e)).toList();
     // print("hasil : $hasil");
     return result.map((e) => SupermarketModel.fromJson(e)).toList();
+  }
+
+  Future<List<dynamic>> readSupermarketByName(String value) async {
+    final db = await instance.database;
+    var result = [];
+    if (db != null) {
+      result = await db.rawQuery(
+          '''select id, name from $tableSupermarket where name = '$value' ''');
+    } else {
+      throw OperationSQLException();
+    }
+    // var aaa = result[0];
+    return result;
   }
 
   //read all
@@ -383,6 +398,33 @@ class SqlDatabase {
 
     result["supermarket"] = superr;
     result["location"] = location;
+
+    return result;
+  }
+
+  // changelok
+  Future<Map<String, dynamic>> GetSuperandLocation(List<dynamic> value) async {
+    Map<String, dynamic> result = {};
+
+    String selectedSupermarket = value[0]["name"];
+    List<String> superr = [];
+    List<String> location = [];
+
+    // supermarket
+    var data = await readAllSupermarket();
+    for (var element in data) {
+      superr.add(element.name);
+    }
+
+    // location
+    var dumpLocation = await readLocationByIDSuper(value[0]["id"]);
+    for (var element in dumpLocation) {
+      location.add(element.locationName);
+    }
+
+    result["supermarket"] = superr;
+    result["location"] = location;
+    result["selectedSupermarket"] = selectedSupermarket;
 
     return result;
   }

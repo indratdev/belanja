@@ -33,3 +33,10 @@ class SuccessInitialTransaction extends TransactionState {
   @override
   List<Object> get props => [result];
 }
+
+// ChangeSupernLocationEvent
+class LoadingChangeSupernLocation extends TransactionState {}
+
+class FailureChangeSupernLocation extends FailureTransactionState {
+  FailureChangeSupernLocation({required super.messageError});
+}

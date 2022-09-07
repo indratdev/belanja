@@ -50,6 +50,7 @@ class MasterSupermarketScreen extends StatelessWidget {
                           Navigator.pop(context);
                           context.read<SupermarketBloc>().add(AddNewSuperMarket(
                               nameSupermarket: superNameController.text));
+                          superNameController.text = "";
                         },
                         child: const Text("Proses"),
                       )

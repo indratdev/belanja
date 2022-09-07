@@ -8,3 +8,11 @@ abstract class TransactionEvent extends Equatable {
 }
 
 class InitialTransactionEvent extends TransactionEvent {}
+
+class ChangeSupernLocationEvent extends TransactionEvent {
+  String supermarketName;
+
+  ChangeSupernLocationEvent({
+    required this.supermarketName,
+  });
+}
