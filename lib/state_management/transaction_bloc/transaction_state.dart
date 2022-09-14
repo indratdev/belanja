@@ -40,3 +40,14 @@ class LoadingChangeSupernLocation extends TransactionState {}
 class FailureChangeSupernLocation extends FailureTransactionState {
   FailureChangeSupernLocation({required super.messageError});
 }
+
+class SuccessChangeSupermarket extends TransactionState {
+  Map<String, dynamic> result = {};
+
+  SuccessChangeSupermarket({
+    required this.result,
+  });
+
+  @override
+  List<Object> get props => [result];
+}

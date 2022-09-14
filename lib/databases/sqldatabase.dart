@@ -1,11 +1,12 @@
 import 'package:belanja/Data/Errors.dart';
+import 'package:belanja/databases/sql_repository.dart';
 import 'package:belanja/models/supermarket_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 import '../models/supermarketlocation_model.dart';
 
-class SqlDatabase {
+class SqlDatabase implements SqlRepository {
   static final SqlDatabase instance = SqlDatabase._init();
   static Database? _database;
   static const String _dbName = 'dbshop.db';
@@ -110,25 +111,44 @@ class SqlDatabase {
     }
   }
 
-  // insert supermarket
-  // ,${category.iconName}
-  Future<int> insertNote(String supermarketName) async {
-    final db = await instance.database;
-    int result = 0;
-    if (db != null) {
-      result = await db.rawInsert('''
+  @override
+  Future<int> insertNote({required String supermarketName}) async {
+    try {
+      final db = await instance.database;
+      int result = 0;
+      if (db != null) {
+        result = await db.rawInsert('''
       INSERT INTO $tableSupermarket (name)
       VALUES
       (
         '$supermarketName'
         );
       ''');
+      }
+      return result;
+    } catch (e) {
+      throw UnimplementedError();
     }
-    return result;
   }
 
-  // CHECK SUPERMARKET IS EXIST ?
+  // insert supermarket
+  // ,${category.iconName}
+  // Future<int> insertNote(String supermarketName) async {
+  //   final db = await instance.database;
+  //   int result = 0;
+  //   if (db != null) {
+  //     result = await db.rawInsert('''
+  //     INSERT INTO $tableSupermarket (name)
+  //     VALUES
+  //     (
+  //       '$supermarketName'
+  //       );
+  //     ''');
+  //   }
+  //   return result;
+  // }
 
+  // CHECK SUPERMARKET IS EXIST ?
   Future<int> isExistSupermarket(String value) async {
     final db = await instance.database;
     var result;
@@ -169,6 +189,20 @@ class SqlDatabase {
       throw OperationSQLException();
     }
     // var aaa = result[0];
+    return result;
+  }
+
+  // read all itemName
+  readListItemName(String value) async {
+    final db = await instance.database;
+    var result = [];
+    if (db != null) {
+      result = await db.rawQuery(
+          ''' select itemName from $tableTransaction where itemName like '%$value%' ''');
+    } else {
+      throw OperationSQLException();
+    }
+    print("result readListItemName : $result");
     return result;
   }
 
@@ -398,6 +432,8 @@ class SqlDatabase {
 
     result["supermarket"] = superr;
     result["location"] = location;
+    // result["selectedSupermarket"] = "Pilih Supermarket";
+    // result["selectedLocation"] = "Pilih Lokasi";
 
     return result;
   }

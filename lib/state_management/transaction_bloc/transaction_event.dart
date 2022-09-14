@@ -11,8 +11,10 @@ class InitialTransactionEvent extends TransactionEvent {}
 
 class ChangeSupernLocationEvent extends TransactionEvent {
   String supermarketName;
+  String? supermarketLocation;
 
   ChangeSupernLocationEvent({
     required this.supermarketName,
+    this.supermarketLocation,
   });
 }

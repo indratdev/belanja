@@ -25,13 +25,12 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
 
     on<ChangeSupernLocationEvent>((event, emit) async {
       emit(LoadingChangeSupernLocation());
-
       try {
         var idSuper =
             await sqldatabase.readSupermarketByName(event.supermarketName);
         var result = await sqldatabase.GetSuperandLocation(idSuper);
 
-        emit(SuccessInitialTransaction(result: result));
+        // emit(SuccessChangeSupermarket(result: result));
       } on OperationSQLException catch (e) {
         emit(FailureChangeSupernLocation(messageError: e.toString()));
       } catch (e) {
